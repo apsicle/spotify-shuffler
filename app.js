@@ -3,7 +3,7 @@
  * the Authorization Code oAuth2 flow to authenticate against
  * the Spotify Accounts.
  *
- * For more information, read
+ * For more information, read ;'//
  * https://developer.spotify.com/web-api/authorization-guide/#authorization_code_flow
  */
 
@@ -12,9 +12,17 @@ var request = require('request'); // "Request" library
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 
-var client_id = 'CLIENT_ID'; // Your client id
-var client_secret = 'CLIENT_SECRET'; // Your secret
-var redirect_uri = 'REDIRECT_URI'; // Your redirect uri
+var config = require('./config');
+
+var client_id = '7e69bb758d454f14a37b31aa195deb70'; // Your client id
+var client_secret = config.secret; // Your secret
+var redirect_uri = 'http://localhost:8080/callback'; // Your redirect uri
+
+var port = process.env.PORT || 8080
+var stateKey = 'spotify_auth_state';
+
+var app = express();
+
 
 /**
  * Generates a random string containing numbers and letters
@@ -31,12 +39,14 @@ var generateRandomString = function(length) {
   return text;
 };
 
-var stateKey = 'spotify_auth_state';
-
-var app = express();
+app.set('view engine', 'ejs');
 
 app.use(express.static(__dirname + '/public'))
    .use(cookieParser());
+
+app.get('/', function(req, res) {
+  res.render('index')
+});
 
 app.get('/login', function(req, res) {
 
@@ -44,14 +54,15 @@ app.get('/login', function(req, res) {
   res.cookie(stateKey, state);
 
   // your application requests authorization
-  var scope = 'user-read-private user-read-email';
+  var scope = 'user-read-private user-read-email user-library-read user-library-modify';
   res.redirect('https://accounts.spotify.com/authorize?' +
     querystring.stringify({
       response_type: 'code',
       client_id: client_id,
       scope: scope,
       redirect_uri: redirect_uri,
-      state: state
+      state: state,
+      show_dialog: true
     }));
 });
 
@@ -141,5 +152,7 @@ app.get('/refresh_token', function(req, res) {
   });
 });
 
-console.log('Listening on 8888');
-app.listen(8888);
+console.log('Listening on 8080');
+app.listen(port, function() {
+  console.log('App is running on http://localhost:' + port);
+});

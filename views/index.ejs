@@ -2,7 +2,7 @@
 <html>
   <head>
     <title>Example of the Authorization Code flow with Spotify</title>
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
     <style type="text/css">
       #login, #loggedin {
         display: none;
@@ -16,17 +16,34 @@
     </style>
   </head>
 
-  <body>
+
+
+  <body id="loginpage">
+
+    <script id="perform-on-load">
+      
+    </script>
+
     <div class="container">
       <div id="login">
-        <h1>This is an example of the Authorization Code flow</h1>
+        <h1>Spotify Shuffler</h1>
         <a href="/login" class="btn btn-primary">Log in with Spotify</a>
       </div>
       <div id="loggedin">
         <div id="user-profile">
         </div>
+    		<div id="user-playlists">
+    		</div>
+    		<div id="user-tracks">
+    		</div>
+        <div id="user-tracks-shuffled">
+        </div>
+        <div id="user-tracks-external-urls">
+        </div>
+        <input id="shuffle-songs" type="button" value="Shuffle your saved tracks" />
         <div id="oauth">
         </div>
+
         <button class="btn btn-default" id="obtain-new-token">Obtain new token using the refresh token</button>
       </div>
     </div>
@@ -50,7 +67,49 @@
         </div>
       </div>
     </script>
+	
 
+
+
+	<script id="user-playlists-template" type="text/x-handlebars-template">
+		<h1>Your Playlists:</h1>
+		<div id = "playlist-name">
+			<ol class="litag">
+				{{#each items}}
+				<li>{{this.name}}</li>
+				{{/each}}
+			</ol>
+			<ol>
+				<li>Coffee</li>
+				<li>Tea</li>
+				<li>Milk</li>
+			</ol>
+		</div>
+	</script>
+	
+	<script id="user-tracks-template" type="text/x-handlebars-template">
+		<h1>Your Saved Tracks:</h1>
+		<div id = "track-name">
+			<ul class="ultag">
+				{{#each this}}
+				<li>{{this.track.name}}</li>
+				{{/each}}
+			</ul>
+		</div>
+	</script>
+
+  <script id="user-tracks-external-urls-template" type="text/x-handlebars-template">
+    <h1>Links to Your Songs (break glass in case of emergency)</h1>
+    <p>If something fails and your playlist is deleted, just copy these links, go to any spotify client, and right click and paste    them into your songs to restore them. You may find it helpful to save these in a .txt file</p>
+    <div id = "track-URL">
+      <ul class="ultag">
+        {{#each this}}
+          <li>{{this}}</li>
+        {{/each}}
+      </ul>
+    </div>
+  </script>
+	
     <script id="oauth-template" type="text/x-handlebars-template">
       <h2>oAuth info</h2>
       <dl class="dl-horizontal">
@@ -61,6 +120,7 @@
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script src="shuffle.js"></script>
     <script>
       (function() {
 
@@ -81,6 +141,20 @@
         var userProfileSource = document.getElementById('user-profile-template').innerHTML,
             userProfileTemplate = Handlebars.compile(userProfileSource),
             userProfilePlaceholder = document.getElementById('user-profile');
+		
+    		var userPlaylistsSource = document.getElementById('user-playlists-template').innerHTML,
+    			userPlaylistsTemplate = Handlebars.compile(userPlaylistsSource),
+    			userPlaylistsPlaceholder = document.getElementById('user-playlists');
+    		
+        var userTracksSource = document.getElementById('user-tracks-template').innerHTML,
+          userTracksTemplate = Handlebars.compile(userTracksSource),
+          userTracksPlaceholder = document.getElementById('user-tracks');
+
+        var userTracksShuffledPlaceholder = document.getElementById('user-tracks-shuffled')
+
+        var userTracksExternalUrlsSource = document.getElementById('user-tracks-external-urls-template').innerHTML,
+          userTracksExternalUrlsTemplate = Handlebars.compile(userTracksExternalUrlsSource),
+          userTracksExternalUrlsPlaceholder = document.getElementById('user-tracks-external-urls')
 
         var oauthSource = document.getElementById('oauth-template').innerHTML,
             oauthTemplate = Handlebars.compile(oauthSource),
@@ -114,6 +188,47 @@
                   $('#loggedin').show();
                 }
             });
+			$.ajax({
+				url: "https://api.spotify.com/v1/me/playlists",
+				headers: {
+					'Authorization': 'Bearer ' + access_token
+					},
+					success: function(response) {
+						userPlaylistsPlaceholder.innerHTML = userPlaylistsTemplate(response);
+						}
+			});
+		  
+      var allTracks = getMaxTracks(access_token);
+      userTracksPlaceholder.innerHTML = userTracksTemplate(allTracks);
+			var linkArr = getLinks(allTracks);
+      var URIArr = getURIs(allTracks);
+      var URLarr = getExternalURLs(allTracks);
+      //alert(linkArr);
+      var reorderedLinkArr = shuffleLinks(linkArr);
+
+      window.onload = function() {
+        document.getElementById ("shuffle-songs").addEventListener ("click", add_songs, false);
+      }
+
+      function add_songs() {
+        deleteLinks(linkArr, access_token);
+        addLinks(reorderedLinkArr, access_token);
+        alert('success')
+      }
+      //alert(reorderedLinkArr);
+      //deleteLinks(linkArr, access_token);
+      //var afterDelete = getMaxTracks(access_token);
+      //alert(getMaxTracks(access_token));
+      //addLinks(reorderedLinkArr, access_token);
+      //var afterAddition = getMaxTracks(access_token);
+      //alert(getMaxTracks(access_token));
+      userTracksExternalUrlsPlaceholder.innerHTML = userTracksExternalUrlsTemplate(URLarr);
+      //userTracksShuffledPlaceholder.innerHTML = userTracksTemplate(afterAddition);
+      
+
+
+
+
           } else {
               // render initial screen
               $('#login').show();
@@ -136,7 +251,10 @@
           }, false);
         }
       })();
+			//curl -X GET "https://api.spotify.com/v1/me/playlists" -H "Accept: application/json" -H "Authorization: Bearer stefe"
     </script>
+	
+	<div style = "background: black"> </div>
   </body>
 </html>
 
