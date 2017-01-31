@@ -12,11 +12,9 @@ var request = require('request'); // "Request" library
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 
-var config = require('./config');
-
 var client_id = '7e69bb758d454f14a37b31aa195deb70'; // Your client id
-var client_secret = config.secret; // Your secret
-var redirect_uri = 'http://localhost:8080/callback'; // Your redirect uri
+var client_secret = process.env.NODE_ENV_SECRET; // Your secret
+var redirect_uri = 'https://spotify-shuffler.herokuapp.com/'; // Your redirect uri
 
 var port = process.env.PORT || 8080
 var stateKey = 'spotify_auth_state';
