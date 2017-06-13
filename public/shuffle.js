@@ -154,7 +154,6 @@ function addLinks(relinkArr, access_token) {
 				}
 			});
 		position += 1;
-
 	}
 }
 

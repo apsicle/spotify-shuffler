@@ -4,3 +4,32 @@
 	position: center;
 	font-family: "Georgia";
 }
+
+#main-header {
+	font-weight: normal;
+	text-align: center;
+	position: center;
+	font-family: "Georgia";
+}
+
+#main-paragraph {
+	text-align: center;
+	position: center;
+	width: 60vw;
+	font-family: "Georgia";
+    display: block;
+    margin-left: auto;
+    margin-right: auto
+}
+
+#shuffle-songs {
+	width: 20vw;
+	height: 2vw;
+	position: center;
+	text-align: center;
+	font-size: 1.5vw;
+	font-family: "Georgia";
+    display: block;
+    margin-left: auto;
+    margin-right: auto
+}
