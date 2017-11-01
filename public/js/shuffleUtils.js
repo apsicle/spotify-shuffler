@@ -3,8 +3,6 @@ function getMaxTracks(access_token) {
 	var position = 0;
 	var tracksArray = [];
 
-
-
 	while(empty != true) {
 		$.ajax({
 				type: 'GET',
@@ -32,7 +30,6 @@ function getMaxTracks(access_token) {
 	return tracksArray;
 	
 }
-
 
 function getLinks(trackArr) {
 	var linkArr = [];
@@ -177,5 +174,5 @@ function addTrack(access_token) {
 					alert(JSON.stringify(tracks));
 				}
 			});
-		empty = true;
+	empty = true;
 }

@@ -3,13 +3,20 @@ var request = require('request');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 
-var client_id = '7e69bb758d454f14a37b31aa195deb70'; // Your client id
-var client_secret = process.env.NODE_ENV_SECRET; // Your secret
-var redirect_uri = 'https://spotify-shuffler.herokuapp.com/callback'; // Your redirect uri
+// Load in proper config variables based on environment
+if (process.env.NODE_ENV_SECRET) {
+  var config = require('./config')('prod')
+} else {
+  var config = require('./config')('dev');
+}
 
-var port = process.env.PORT || 8080
+var client_id = config.client_id; // Your client id
+var client_secret =  config.secret; // Your secret
+var redirect_uri = config.redirect_uri ; // Your redirect uri
+var port = config.port
 var stateKey = 'spotify_auth_state';
 
+// Start up server
 var app = express();
 
 /**
@@ -57,7 +64,7 @@ app.get('/login', function(req, res) {
 app.get('/callback', function(req, res) {
   // your application requests refresh and access tokens
   // after checking the state parameter
-
+  
   var code = req.query.code || null;
   var state = req.query.state || null;
   var storedState = req.cookies ? req.cookies[stateKey] : null;
@@ -139,7 +146,7 @@ app.get('/refresh_token', function(req, res) {
   });
 });
 
-console.log('Listening on 8080');
+console.log(`Listening on ${port}`);
 app.listen(port, function() {
-  console.log('App is running on http://localhost:' + port);
+  console.log('App is running');
 });

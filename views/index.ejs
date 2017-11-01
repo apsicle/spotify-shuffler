@@ -4,25 +4,9 @@
     <title>Spotify song shuffler</title>
     <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/styles/styles.css">
-    <style type="text/css">
-      #login, #loggedin {
-        display: none;
-      }
-      .text-overflow {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        width: 500px;
-      }
-    </style>
   </head>
 
   <body id="loginpage">
-
-    <script id="perform-on-load">
-      
-    </script>
-
     <div class="container">
       <div id="login">
         <h1>Spotify Shuffler</h1>
@@ -48,145 +32,22 @@
       <p id='main-paragraph'> Don't close the tab while the process is running! It takes ~8 seconds per 100 songs. You will be alerted once it is finished. In case something goes wrong, you can restore your songs with the instructions below. Okay, you can click now. </p>           
     </script>
 
-  <script id="user-tracks-external-urls-template" type="text/x-handlebars-template">
-    <h1>Links to Your Songs</h1>
-    <p>To save these songs to your account, copy these links and paste them into any spotify client.</p>
-    <div id = "track-URL">
-      <ul class="ultag">
-        {{#each this}}
-          <li>{{this}}</li>
-        {{/each}}
-      </ul>
-    </div>
-  </script>
-
-    <script id="oauth-template" type="text/x-handlebars-template">
-      <h2>oAuth info</h2>
-      <dl class="dl-horizontal">
-        <dt>Access token</dt><dd class="text-overflow">{{access_token}}</dd>
-        <dt>Refresh token</dt><dd class="text-overflow">{{refresh_token}}></dd>
-      </dl>
+    <script id="user-tracks-external-urls-template" type="text/x-handlebars-template">
+      <h1>Links to Your Songs</h1>
+      <p>To save these songs to your account, copy these links and paste them into any spotify client.</p>
+      <div id = "track-URL">
+        <ul class="ultag">
+          {{#each this}}
+            <li>{{this}}</li>
+          {{/each}}
+        </ul>
+      </div>
     </script>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
-    <script src="/js/shuffle.js"></script>
-    <script>
-      (function() {
-
-        /**
-         * Obtains parameters from the hash of the URL
-         * @return Object
-         */
-        function getHashParams() {
-          var hashParams = {};
-          var e, r = /([^&;=]+)=?([^&;]*)/g,
-              q = window.location.hash.substring(1);
-          while ( e = r.exec(q)) {
-             hashParams[e[1]] = decodeURIComponent(e[2]);
-          }
-          return hashParams;
-        }
-
-        var userProfileSource = document.getElementById('user-profile-template').innerHTML,
-            userProfileTemplate = Handlebars.compile(userProfileSource),
-            userProfilePlaceholder = document.getElementById('user-profile');
-    		
-        var userTracksExternalUrlsSource = document.getElementById('user-tracks-external-urls-template').innerHTML,
-          userTracksExternalUrlsTemplate = Handlebars.compile(userTracksExternalUrlsSource),
-          userTracksExternalUrlsPlaceholder = document.getElementById('user-tracks-external-urls')
-
-        var oauthSource = document.getElementById('oauth-template').innerHTML,
-            oauthTemplate = Handlebars.compile(oauthSource),
-            oauthPlaceholder = document.getElementById('oauth');
-
-        var params = getHashParams();
-
-        var access_token = params.access_token,
-            refresh_token = params.refresh_token,
-            error = params.error;
-
-        if (error) {
-          alert('There was an error during the authentication');
-        } else {
-          if (access_token) {
-            // render oauth info
-            oauthPlaceholder.innerHTML = oauthTemplate({
-              access_token: access_token,
-              refresh_token: refresh_token
-            });
-
-            $.ajax({
-                url: 'https://api.spotify.com/v1/me',
-                headers: {
-                  'Authorization': 'Bearer ' + access_token
-                },
-                success: function(response) {
-                  userProfilePlaceholder.innerHTML = userProfileTemplate(response);
-
-                  $('#login').hide();
-                  $('#loggedin').show();
-                }
-            });
-
-		  
-      var allTracks = getMaxTracks(access_token);
-			var linkArr = getLinks(allTracks);
-      var URIArr = getURIs(allTracks);
-      var URLarr = getExternalURLs(allTracks);
-      //alert(linkArr);
-      var reorderedLinkArr = shuffleLinks(linkArr);
-
-      window.onload = function() {
-        document.getElementById("shuffle-songs").addEventListener ("click", function() {document.getElementById("shuffle-songs").disabled = true; setTimeout(add_songs, 1);}, false);
-      }
-
-      function add_songs() {
-        deleteLinks(linkArr, access_token);
-        addLinks(reorderedLinkArr, access_token);
-        document.getElementById("shuffle-songs").disabled = false;
-        alert('Success!');
-      }
-      //alert(reorderedLinkArr);
-      //deleteLinks(linkArr, access_token);
-      //var afterDelete = getMaxTracks(access_token);
-      //alert(getMaxTracks(access_token));
-      //addLinks(reorderedLinkArr, access_token);
-      //var afterAddition = getMaxTracks(access_token);
-      //alert(getMaxTracks(access_token));
-      userTracksExternalUrlsPlaceholder.innerHTML = userTracksExternalUrlsTemplate(URLarr);
-      //userTracksShuffledPlaceholder.innerHTML = userTracksTemplate(afterAddition);
-      
-
-
-
-
-          } else {
-              // render initial screen
-              $('#login').show();
-              $('#loggedin').hide();
-          }
-
-          document.getElementById('obtain-new-token').addEventListener('click', function() {
-            $.ajax({
-              url: '/refresh_token',
-              data: {
-                'refresh_token': refresh_token
-              }
-            }).done(function(data) {
-              access_token = data.access_token;
-              oauthPlaceholder.innerHTML = oauthTemplate({
-                access_token: access_token,
-                refresh_token: refresh_token
-              });
-            });
-          }, false);
-        }
-      })();
-			//curl -X GET "https://api.spotify.com/v1/me/playlists" -H "Accept: application/json" -H "Authorization: Bearer stefe"
-    </script>
-	
-	<div style = "background: black"> </div>
+    <script src="/js/shuffleUtils.js"></script>
+    <script src="/js/handlePageLoad.js"></script>
   </body>
 </html>
 
