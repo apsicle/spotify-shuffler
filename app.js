@@ -1,35 +1,16 @@
-/**
- * This is an example of a basic node.js script that performs
- * the Authorization Code oAuth2 flow to authenticate against
- * the Spotify Accounts.
- *
- * For more information, read ;'//
- * https://developer.spotify.com/web-api/authorization-guide/#authorization_code_flow
- */
-
- /*
- 1) Authentication - unique to each api: grants access token and client id
- 2) Use ajax request to GET data from spotify web api, sending access token and client id.
- 3) Do something with the data (like use handlebars to show it on the webpage)
- 4) Do something else (like use custom javascript functions to shuffle around list of songs)
- 5) Use ajax request to PUT data to spotify web api, sending access token and client id.
- */
-
-var express = require('express'); // Express web server framework
-var request = require('request'); // "Request" library
+var express = require('express');
+var request = require('request');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 
 var client_id = '7e69bb758d454f14a37b31aa195deb70'; // Your client id
 var client_secret = process.env.NODE_ENV_SECRET; // Your secret
 var redirect_uri = 'https://spotify-shuffler.herokuapp.com/callback'; // Your redirect uri
-//var redirect_uri = 'http://localhost:8080/callback'
 
 var port = process.env.PORT || 8080
 var stateKey = 'spotify_auth_state';
 
 var app = express();
-
 
 /**
  * Generates a random string containing numbers and letters
@@ -74,7 +55,6 @@ app.get('/login', function(req, res) {
 });
 
 app.get('/callback', function(req, res) {
-
   // your application requests refresh and access tokens
   // after checking the state parameter
 
