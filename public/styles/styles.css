@@ -1,35 +1,84 @@
+* { 
+	margin: 0;
+	padding: 0;
+	font-family: 'Roboto', sans-serif;
+}
+
+.body {
+	background-color: black;
+}
+
+#header {
+	
+}
+
 #login {
-	background-color: white;
+	background-color: black;
 	text-align: center;
-	position: center;
+	position: relative;
+	height: 80vh;
+	width: 100vw;
 	font-family: "Georgia";
+	color: white;
+}
+
+#login > h1 {
+	position: relative;
+	top: 15vh;
+	bottom: auto;
+	height: 20 vh;
+	font-weight: bold;
+	font-size: 7.5vh;
+}
+
+#login > #login-button {
+	position: relative;
+	top: 50vh;
+	border: .25vh solid #1DB954;
+	border-radius: 5vh;
+	background-color: #1DB954;
+	padding: 1.5vh 7.5vh 1.5vh 7.5vh;
+	color: white;
+	font-weight: bold;
+	font-size: 1.5vh;
+}
+
+#login > #login-button:link {
+	text-decoration: none;
+}
+
+#loggedin {
+	background-color: black;
+	text-align: center;
+	position: relative;
+	height: 80vh;
+	width: 100vw;
+	color: white;
 }
 
 #main-header {
 	font-weight: normal;
 	text-align: center;
 	position: center;
-	font-family: "Georgia";
 }
 
 #main-paragraph {
 	text-align: center;
 	position: center;
 	width: 60vw;
-	font-family: "Georgia";
     display: block;
     margin-left: auto;
     margin-right: auto
 }
 
 #shuffle-songs {
-	width: 20vw;
-	height: 2vw;
-	position: center;
-	text-align: center;
-	font-size: 1.5vw;
-	font-family: "Georgia";
-    display: block;
-    margin-left: auto;
-    margin-right: auto
+	position: relative;
+	top: 50vh;
+	border: .25vh solid #1DB954;
+	border-radius: 5vh;
+	background-color: #1DB954;
+	padding: 1.5vh 7.5vh 1.5vh 7.5vh;
+	color: white;
+	font-weight: bold;
+	font-size: 1.5vh;
 }

@@ -40,7 +40,7 @@ app.use(express.static(__dirname + '/public'))
    .use(cookieParser());
 
 app.get('/', function(req, res) {
-  res.render('index')
+  res.render('login')
 });
 
 app.get('/login', function(req, res) {
@@ -121,6 +121,10 @@ app.get('/callback', function(req, res) {
     });
   }
 });
+
+app.get('/loggedin/?', function(req, res) {
+  res.render('loggedin');
+})
 
 app.get('/refresh_token', function(req, res) {
 
