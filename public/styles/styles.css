@@ -13,6 +13,7 @@
 }
 
 #login {
+	display: none;
 	background-color: black;
 	text-align: center;
 	position: relative;
@@ -48,6 +49,10 @@
 }
 
 #loggedin {
+	display: none;
+}
+
+#loggedin-top {
 	background-color: black;
 	text-align: center;
 	position: relative;
@@ -56,24 +61,14 @@
 	color: white;
 }
 
-#main-header {
-	font-weight: normal;
-	text-align: center;
-	position: center;
-}
-
-#main-paragraph {
-	text-align: center;
-	position: center;
-	width: 60vw;
-    display: block;
-    margin-left: auto;
-    margin-right: auto
-}
-
-#shuffle-songs {
+#loggedin-top > #text-description {
 	position: relative;
-	top: 50vh;
+	top: 25vh;
+}
+
+#loggedin-top > #shuffle-songs {
+	position: relative;
+	top: 45vh;
 	border: .25vh solid #1DB954;
 	border-radius: 5vh;
 	background-color: #1DB954;
@@ -81,4 +76,10 @@
 	color: white;
 	font-weight: bold;
 	font-size: 1.5vh;
+}
+
+#loggedin-top > #show-links {
+	position: absolute;
+	bottom: 0vh;
+	left: 0vh;
 }

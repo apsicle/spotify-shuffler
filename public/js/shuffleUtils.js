@@ -1,35 +1,4 @@
-function getMaxTracks(access_token) {
-	var empty = false;
-	var position = 0;
-	var tracksArray = [];
-
-	while(empty != true) {
-		$.ajax({
-				type: 'GET',
-				url: "https://api.spotify.com/v1/me/tracks",
-				dataType: 'json',
-				contentType: 'json',
-				headers: {
-					'Authorization': 'Bearer ' + access_token
-					},
-				data: {limit: 50, offset: position},
-				async: false,
-				success: function(response) {
-					tracksArray = tracksArray.concat(response.items);
-
-					if(response.next == null) {empty = true};
-					},
-				error: function(exception) {
-					alert('Exception: something failed');
-				}
-			});
-		position += 50
-
-	}
-	
-	return tracksArray;
-	
-}
+/*Array functions - no AJAX*/
 
 function getLinks(trackArr) {
 	var linkArr = [];
@@ -70,109 +39,125 @@ function shuffleLinks(linkArr) {
 	return linkArr;
 }
 
-function deleteLinks(linkArr, access_token) {
-	var empty = false;
+/*Functions that access the spotify Web API*/
+function deleteLinks(linkArr, reorderedLinkArr, access_token) {
+	// Delete links 50 at a time. (Spotify API limit)
 	var position = 0;
-	var size = linkArr.length;
 
-
-	while(empty != true) {
+	function startDeleteLinks(linkArr, reorderedLinkArr, access_token, position) {
 		$.ajax({
-				type: 'DELETE',
-				url: "https://api.spotify.com/v1/me/tracks",
-				contentType: 'application/json',
-				headers: {
-					'Authorization': 'Bearer ' + access_token
-					},
-				data: JSON.stringify(linkArr.slice(position, position + 50)),
-				async: false,
-				success: function(response) {
-					if((position + 50) > size) {empty = true};
-					},
-				error: function(jqxhr) {
-					alert(jqxhr.responseText);
-				}
-			});
-		position += 50;
-
+			type: 'DELETE',
+			url: "https://api.spotify.com/v1/me/tracks",
+			contentType: 'application/json',
+			headers: {
+				'Authorization': 'Bearer ' + access_token
+				},
+			data: JSON.stringify(linkArr.slice(position, position + 50)),
+			async: true,
+			success: function(response) {
+				if((position + 50) > linkArr.length) {
+					$('#text-description')[0].innerHTML = "Reordering Songs...";
+					addLinks(reorderedLinkArr, access_token);
+				} else {
+					startDeleteLinks(linkArr, reorderedLinkArr, access_token, position + 50);					
+				};
+			},
+			error: function(err) {
+				alert('Error: failed while reordering tracks. Restore tracks by copy and pasting song links into your spotify player');
+			}
+		});
 	}
+	
+	startDeleteLinks(linkArr, reorderedLinkArr, access_token, position);
 }
 
-// function addLinks(relinkArr, access_token) {
-// 	'''This version is faster but wont actually be random because spotify will place the songs in in a certain order when 
-// 	given an array of song ids.'''
-// 	var empty = false;
-// 	var position = 0;
-// 	var size = relinkArr.length;
+function addLinks(reorderedLinkArr, access_token) {
+	// Add links 
+	var position = 0;
 
-// 	while(empty != true) {
-// 		$.ajax({
-// 				type: 'PUT',
-// 				url: "https://api.spotify.com/v1/me/tracks",
-// 				contentType: 'application/json',
-// 				headers: {
-// 					'Authorization': 'Bearer ' + access_token
-// 					},
-// 				data: JSON.stringify(relinkArr.slice(position, position + 25)),
-// 				async: false,
-// 				success: function(response) {
-// 					if((position + 25) >= size) {empty = true};
-// 					},
-// 				error: function(exception) {
-// 					alert('Exception: something failed');
-// 				}
-// 			});
-// 		position += 25;
+	function startAddLinks(reorderedLinkArr, access_token, position) {
+		$.ajax({
+			type: 'PUT',
+			url: "https://api.spotify.com/v1/me/tracks",
+			contentType: 'application/json',
+			headers: {
+				'Authorization': 'Bearer ' + access_token
+				},
+			data: JSON.stringify(reorderedLinkArr.slice(position, position + 50)),
+			async: true,
+			success: function(response) {
+				if((position + 50) >= reorderedLinkArr.length) {
+					$('#text-description')[0].innerHTML = "Done!";
+					$('#shuffle-songs').disabled = false;
+					console.log(position);
+				} else {
+					startAddLinks(reorderedLinkArr, access_token, position+50);
+				};
+			},
+			error: function(err) {
+				alert('Error: failed while reordering tracks. Restore tracks by copy and pasting song links into your spotify player');
+			}
+		});
+	}
 
-// 	}
-// }
+	startAddLinks(reorderedLinkArr, access_token, position)
+}
 
-//add some saving functionality before deleting dudes playlist.
-function addLinks(relinkArr, access_token) {
+function getMaxTracks(access_token) {
 	var empty = false;
 	var position = 0;
-	var size = relinkArr.length;
+	var tracksArray = [];
 
 	while(empty != true) {
 		$.ajax({
-				type: 'PUT',
+				type: 'GET',
 				url: "https://api.spotify.com/v1/me/tracks",
-				contentType: 'application/json',
+				dataType: 'json',
+				contentType: 'json',
 				headers: {
 					'Authorization': 'Bearer ' + access_token
 					},
-				data: JSON.stringify(relinkArr.slice(position, position + 1)),
+				data: {limit: 50, offset: position},
 				async: false,
 				success: function(response) {
-					if((position + 1) >= size) {empty = true};
+					tracksArray = tracksArray.concat(response.items);
+
+					if(response.next == null) {empty = true};
 					},
 				error: function(exception) {
-					alert('Exception: something failed');
+					alert('Exception: failed while getting tracks');
 				}
 			});
-		position += 1;
+		position += 50
+
 	}
+	
+	return tracksArray;
+
 }
 
-function addTrack(access_token) {
-	var tracks = ['3MrRksHupTVEQ7YbA0FsZK'];
+function getUserProfile(access_token) {
+	var profile;
+
 	$.ajax({
-				type: 'PUT',
-				url: "https://api.spotify.com/v1/me/tracks",
-				contentType: 'application/json',
-				headers: {
-					'Authorization': 'Bearer ' + access_token
-					},
-				data: JSON.stringify(tracks),
-				async: false,
-				success: function(response) {
-					alert('You added the track to the playlist!')
-					},
-				error: function(jqxhr) {
-					alert('Exception: You failed to add the track to the playlist!');
-					alert(jqxhr.responseText);
-					alert(JSON.stringify(tracks));
-				}
-			});
-	empty = true;
+		url: 'https://api.spotify.com/v1/me',
+		async:true,
+        headers: {
+            'Authorization': 'Bearer ' + access_token
+        },
+        success: function(response) {
+            profile = response;
+        }
+	});
+	
+	return profile;
+}
+
+/*Given the array of song URIs and the list of re-ordered song URIs,
+shuffles the tracks saved by the user*/
+function shuffleTracks(linkArr, reorderedLinkArr, access_token) {
+	$('#text-description')[0].innerHTML = "Getting Songs..."
+	setTimeout(function() {
+		deleteLinks(linkArr, reorderedLinkArr, access_token);
+	}, 100);
 }

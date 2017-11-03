@@ -12,26 +12,24 @@
         <h1>Spotify Shuffler</h1>
         <a href="/login" id="login-button">Log in with Spotify</a>
       </div>
+
       <div id="loggedin">
-        <div id="user-profile">
+        <div id="loggedin-top">
+          <h1 id='text-description'> Click the button below to shuffle.</h1>
+          <input id="shuffle-songs" type="button" value="Shuffle your saved tracks" />
+          <input id="show-links" type="button" value="Show links to Your Songs" />          
         </div>
-    	<input id="shuffle-songs" type="button" value="Shuffle your saved tracks" />
-
-        <div id="user-tracks-external-urls">
+      
+        <div id="loggedin-bottom">
+          <div id="user-tracks-external-urls">
+          </div>
         </div>
-
       </div>
     </div>
-
-    <script id="user-profile-template" type="text/x-handlebars-template">
-      <h1 id='main-header'> Read before clicking, <strong>{{id}}</strong>. </h1>
-      <p id='main-paragraph'> Don't close the tab while the process is running! It takes ~8 seconds per 100 songs. You will be alerted once it is finished. In case something goes wrong, you can restore your songs with the instructions below. Okay, you can click now. </p>           
-    </script>
-
+    
     <script id="user-tracks-external-urls-template" type="text/x-handlebars-template">
-      <h1>Links to Your Songs</h1>
-      <p>To save these songs to your account, copy these links and paste them into any spotify client.</p>
-      <div id = "track-URL">
+      <p>You probably won't need these. In the off chance that something goes wrong, copy these links and paste them into any spotify client.</p>
+      <div id="track-URL">
         <ul class="ultag">
           {{#each this}}
             <li>{{this}}</li>
@@ -42,6 +40,7 @@
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+    <script src="/js/utils.js"></script>    
     <script src="/js/shuffleUtils.js"></script>
     <script src="/js/handlePageLoad.js"></script>
   </body>
