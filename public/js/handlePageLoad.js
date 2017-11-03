@@ -48,12 +48,13 @@ function onLogin(access_token) {
     window.onload = function() {
         const shuffleButton = document.getElementById("shuffle-songs");
         const showLinksButton = document.getElementById("show-links");
-        
+
         // start tracks hidden
         $('#user-tracks-external-urls').hide();
 
         shuffleButton.addEventListener ("click", function() {
-            this.disabled = true; // don't allow duplicate requests to run at the same time
+            this.disabled = true; // Just click once! Then get off the dang site.
+            this.id = "shuffle-songs-disabled";
             shuffleTracks(linkArr, reorderedLinkArr, access_token);
             
         }, false);

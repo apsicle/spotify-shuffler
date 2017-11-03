@@ -8,10 +8,6 @@
 	background-color: black;
 }
 
-#header {
-	
-}
-
 #login {
 	display: none;
 	background-color: black;
@@ -67,6 +63,22 @@
 }
 
 #loggedin-top > #shuffle-songs {
+	position: relative;
+	top: 45vh;
+	border: .25vh solid #1DB954;
+	border-radius: 5vh;
+	background-color: #1DB954;
+	padding: 1.5vh 7.5vh 1.5vh 7.5vh;
+	color: white;
+	font-weight: bold;
+	font-size: 1.5vh;
+}
+
+#loggedin-top > #shuffle-songs:hover {
+	cursor:pointer;
+}
+
+#loggedin-top > #shuffle-songs-disabled {
 	position: relative;
 	top: 45vh;
 	border: .25vh solid #1DB954;

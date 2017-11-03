@@ -88,8 +88,6 @@ function addLinks(reorderedLinkArr, access_token) {
 			success: function(response) {
 				if((position + 50) >= reorderedLinkArr.length) {
 					$('#text-description')[0].innerHTML = "Done!";
-					$('#shuffle-songs').disabled = false;
-					console.log(position);
 				} else {
 					startAddLinks(reorderedLinkArr, access_token, position+50);
 				};
